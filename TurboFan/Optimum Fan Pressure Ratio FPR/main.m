@@ -1,7 +1,5 @@
 %% Clear Workspace
 % Mohamed Ahmed Hassan Ahmed
-% Sec   : 2
-% BN    : 10
 clear
 clc
 
