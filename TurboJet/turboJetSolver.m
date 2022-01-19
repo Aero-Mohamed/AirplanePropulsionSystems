@@ -77,7 +77,7 @@ V9 = M_9 * a_9;
 
 
 %% Outputing S.Thrust, SFC & efficiencies
-F_sp            = a_0 * ((1+f) * M_9 - M_0 + (1+f)*(T_9/T_0)*(1-1/P9_P0)/gama_compressor/M_9 );
+F_sp            = a_0 * ((1+f) * (V9/a_0) - M_0 + (1+f)*(T_9/T_0)*(1-1/P9_P0)/gama_compressor/(V9/a_0) );
 SFC             =  f / F_sp;
 eta_total       = V_0 / SFC / h_PR;
 eta_propulsive  = 2 / ((F_sp/V_0) + 2);
