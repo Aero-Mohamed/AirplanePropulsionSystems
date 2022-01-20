@@ -1,0 +1,8 @@
+function tau_pi = adiabaticEff(e, gamma, pi_tau, compressor_turbine)
+
+    if(compressor_turbine == "compressor")
+        tau_pi = pi_tau^();
+    elseif(compressor_turbine == "turbine")
+        
+    end
+end
