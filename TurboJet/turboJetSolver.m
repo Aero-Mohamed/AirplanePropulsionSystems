@@ -6,14 +6,14 @@ clc
 %% Defintion of Aussumption variable
 % value from state of the art table
 % Level of Technology 4
-pi_diff             = 0.95;
+pi_diff             = 0.9;
 pi_fan_diff         = 0.995;
 e_compressor        = 0.9;
 e_fan               = 0.89;
-pi_burner           = 0.96;
+pi_burner           = 0.95;
 eta_burner          = 0.9;
 e_turbine           = 0.9;
-eta_mechanical      = 0.99;
+eta_mechanical      = 0.999;
 
 gama_nozzle         = 1.4;
 gama_compressor     = 1.4;
@@ -21,6 +21,7 @@ gama_turbine        = 1.333;
 
 R                   = 287;
 h_PR                = 4.28e7;
+nozzleConfiguration = "CD"; % "C" or "CD"
 
 %% Defintion of Givens variables
 % Operating Condition
@@ -48,23 +49,30 @@ tau_t               = 1 - tau_ramp*(tau_c-1)/(eta_mechanical*(1+f)*tau_lambda);
 pi_turbine          = adiabaticEff("turbine", "tau", tau_t, e_turbine, gama_turbine); % Eff
 
 
-%% Checking The Nozzle
-
+%% Checking The Nozzle 
 Pt9_P0 = pi_turbine*pi_burner*pi_compressor*pi_diff*pi_ramp;
-
-if( Pt9_P0 > 1.89 )
-    disp('Chocked Nozzle Pt9_P0 > 1.89')
-    M_9     = 1;
-    Pt9_P9  = ( 1 + ((gama_turbine-1)/2))^(gama_turbine/(gama_turbine-1));
-    P9_P0   = Pt9_P0 / Pt9_P9;
-elseif (Pt9_P0 == 1.89)
-    disp('Chocked Nozzle Pt9_P0 = 1.89')
-    M_9     = 1;
-    P9      = P_0;
-    P9_P0   = 1;
-    Pt9_P9  = Pt9_P0;
-elseif( Pt9_P0 < 1.89 )
-    disp('Unchocked Nozzle P9 = P0')
+if(nozzleConfiguration == "C")
+    % Assuming Convergent Nozzle
+    if( Pt9_P0 > 1.89 )
+        disp('Chocked Nozzle Pt9_P0 > 1.89')
+        M_9     = 1;
+        Pt9_P9  = ( 1 + ((gama_turbine-1)/2))^(gama_turbine/(gama_turbine-1));
+        P9_P0   = Pt9_P0 / Pt9_P9;
+    elseif (Pt9_P0 == 1.89)
+        disp('Chocked Nozzle Pt9_P0 = 1.89')
+        M_9     = 1;
+        P9      = P_0;
+        P9_P0   = 1;
+        Pt9_P9  = Pt9_P0;
+    elseif( Pt9_P0 < 1.89 )
+        disp('Unchocked Nozzle P9 = P0')
+        P9      = P_0;
+        P9_P0   = 1;
+        Pt9_P9  = Pt9_P0;
+        M_9     = sqrt(2*(Pt9_P9^((gama_turbine-1)/gama_turbine) - 1)/(gama_turbine-1));
+    end
+else
+    % Assuming Convergent-Divargent Nozzle
     P9      = P_0;
     P9_P0   = 1;
     Pt9_P9  = Pt9_P0;
