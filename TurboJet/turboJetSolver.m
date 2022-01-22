@@ -6,12 +6,12 @@ clc
 %% Defintion of Aussumption variable
 % value from state of the art table
 % Level of Technology 4
-pi_diff             = 0.9;
-pi_nozzle           = 0.995;
+pi_diff             = 0.96;
+pi_nozzle           = 0.97;
 pi_fan_diff         = 0.995;
 e_compressor        = 0.9;
 e_fan               = 0.89;
-pi_burner           = 0.95;
+pi_burner           = 0.96;
 eta_burner          = 0.999;
 e_turbine           = 0.9;
 eta_mechanical      = 0.995;
@@ -32,22 +32,22 @@ a_0                 = 340.17; % m/s
 M_0                 = 0.0;
 V_0                 = M_0 * a_0;
 % Design Parameter
-pi_compressor       = 8;
-T_t4                = 1200; % kelvin
+pi_compressor       = 6.458;
+T_t4                = 1170; % kelvin
 
 %% Defintion of Variables to be calculated from givens & assumption
 
 Cp_t                = gama_turbine/(gama_turbine-1) * R;
 Cp_c                = gama_compressor/(gama_compressor-1) * R;
 tau_ramp            = (1 + ( (gama_nozzle-1)/2*M_0^2) );
-pi_ramp             = adiabaticEff("compressor", "tau", tau_ramp, 1, gama_compressor); % Eff
+pi_ramp             = polytropicEff("compressor", "tau", tau_ramp, 1, gama_compressor); % Eff
 tau_lambda          = (Cp_t*T_t4)/(Cp_c*T_0);
-tau_c               = polytropicEff("compressor", "pi", pi_compressor, 0.801, gama_compressor); % Eff
+tau_c               = adiabaticEff("compressor", "pi", pi_compressor, 0.88, gama_compressor); % Eff
 % First Law of thermodynamics across Burner yields
 f                   = ((tau_c*tau_ramp) - tau_lambda) / (tau_lambda - (eta_burner*h_PR/(Cp_c*T_0)));
 % Turbine Compressor Power Balance
 tau_t               = 1 - tau_ramp*(tau_c-1)/(eta_mechanical*(1+f)*tau_lambda);
-pi_turbine          = polytropicEff("turbine", "tau", tau_t, 0.92, gama_turbine); % Eff
+pi_turbine          = polytropicEff("turbine", "tau", tau_t, 0.9, gama_turbine); % Eff
 
 
 %% Checking The Nozzle 
@@ -74,12 +74,11 @@ if(nozzleConfiguration == "C")
     end
 else
     % Assuming Convergent-Divargent Nozzle & Choked.
-    disp('Choked C-D-Nozzle P9 = P0 and M_9 = 1')
+    disp('Choked C-D-Nozzle P9 = P0 and M_9 > 1')
     P9      = P_0;
     P9_P0   = 1;
     Pt9_P9  = Pt9_P0;
-    %M_9     = sqrt(2*(Pt9_P9^((gama_turbine-1)/gama_turbine) - 1)/(gama_turbine-1));
-    M_9     = 1;
+    M_9     = sqrt(2*(Pt9_P9^((gama_turbine-1)/gama_turbine) - 1)/(gama_turbine-1));
 end
 T_t5 = T_t4*tau_t;
 T_9 = (T_t5) / (Pt9_P9)^((gama_turbine-1)/gama_turbine);
